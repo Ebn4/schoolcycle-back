@@ -45,4 +45,16 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function preferences(){
+        return $this->belongsToMany(Category::class,'preference');
+    }
+
+    public function favorites(){
+        return $this->hasMany(Favorite::class);
+    }
+
+    public function chats(){
+        return $this->hasMany(Chat::class);
+    }
 }
