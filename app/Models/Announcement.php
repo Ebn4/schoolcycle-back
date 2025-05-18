@@ -16,6 +16,8 @@ class Announcement extends Model
         'is_completed',
         'is_canceled',
         'school_level',
+        'price',
+        'state',
         'exchange_location',
         'exchange_location_lat',
         'exchange_location_logt',
@@ -23,11 +25,11 @@ class Announcement extends Model
         'category_id'
     ];
 
-    public function users(){
+    public function user(){
         return $this->belongsTo(User::class);
     }
 
-    public function categories(){
+    public function category(){
         return $this->belongsTo(Category::class);
     }
 

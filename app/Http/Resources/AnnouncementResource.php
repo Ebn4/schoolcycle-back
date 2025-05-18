@@ -21,6 +21,8 @@ class AnnouncementResource extends JsonResource
             'school_level' => $this->school_level,
             'is_completed' => $this->is_completed,
             'is_canceled' => $this->is_canceled,
+            'price' => $this->price,
+            'state' => $this->state,
             'exchange_location' => $this->exchange_location,
             'exchange_location_lat' => $this->exchange_location_lat,
             'exchange_location_logt' => $this->exchange_location_logt,
