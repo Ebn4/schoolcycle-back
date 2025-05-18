@@ -27,4 +27,17 @@ class Announcement extends Model
     public function categories(){
         return $this->belongsTo(Category::class);
     }
+
+    public function favorite(){
+        return $this->hasOne(Favorite::class);
+    }
+
+    public function photos(){
+        return $this->hasMany(Photo::class);
+    }
+
+    public function chats(){
+        return $this->hasMany(Chat::class);
+    }
+
 }
