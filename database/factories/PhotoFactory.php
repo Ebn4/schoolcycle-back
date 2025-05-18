@@ -3,13 +3,12 @@
 namespace Database\Factories;
 
 use App\Models\Announcement;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Transaction>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Photo>
  */
-class TransactionFactory extends Factory
+class PhotoFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -19,9 +18,8 @@ class TransactionFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory(),
+            'url' => fake()->imageUrl(640, 480, 'people'),
             'announcement_id' => Announcement::factory(),
-            'status' => fake()->boolean(),
         ];
     }
 }

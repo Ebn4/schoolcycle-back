@@ -17,13 +17,13 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('description');
-            $table->string('operation_type');
+            $table->enum('operation_type', ['vente', 'echange', 'don']);
             $table->string('school_level');
             $table->boolean('is_completed')->default(false);
             $table->boolean('is_canceled')->default(true);
             $table->string('exchange_location');
-            $table->double('exchange location_lat');
-            $table->double('exchange location_logt');
+            $table->double('exchange_location_lat');
+            $table->double('exchange_location_logt');
             $table->foreignIdFor(User::class)->constrained('users')->onDelete('cascade');
             $table->foreignIdFor(Category::class)->constrained('categories')->onDelete('cascade');
             $table->timestamps();
