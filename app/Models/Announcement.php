@@ -16,6 +16,8 @@ class Announcement extends Model
         'is_completed',
         'is_canceled',
         'school_level',
+        'price',
+        'state',
         'exchange_location',
         'exchange_location_lat',
         'exchange_location_logt',

@@ -114,4 +114,55 @@ class AnnouncementController extends Controller
             'data' => 'announcement deleted'
         ]);
     }
+
+
+    public function getHeight(){
+        $announcements = Announcement::with(['photos','category','favorite','user'])->latest()->take(8)->get();
+        return AnnouncementResource::collection($announcements);
+    }
+
+    public function filterAnnouncement(Request $request)
+    {
+        // Récupération des paramètres
+        $operation_type = $request->query('operation_type');
+        $school_level = $request->query('school_level');
+        $price = $request->query('price');
+        $state = $request->query('state');
+
+        // Conversion en tableau si nécessaire
+        // verifie si la valeur est null elle retourne null
+        // si la valeur est un tableau elle retourne tel quel
+        // si c'est une chaine de caractere elle la convertie en tableau
+        $toArray = function($value) {
+            if (is_null($value)) return null;
+            return is_array($value) ? $value : explode(',', $value);
+        };
+
+        $query = Announcement::with(['photos', 'favorite', 'user', 'category']);
+
+        // Filtrage conditionnel
+        if ($operation_type) {
+            $operation_types = $toArray($operation_type);
+            $query->whereIn('operation_type', $operation_types);
+        }
+
+        if ($school_level) {
+            $school_levels = $toArray($school_level);
+            $query->whereIn('school_level', $school_levels);
+        }
+
+        if ($price) {
+            $prices = $toArray($price);
+            $query->whereIn('price', $prices);
+        }
+
+        if ($state) {
+            $states = $toArray($state);
+            $query->whereIn('state', $states);
+        }
+
+        $announcements = $query->get();
+
+        return AnnouncementResource::collection($announcements);
+    }
 }

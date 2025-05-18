@@ -21,6 +21,8 @@ return new class extends Migration
             $table->string('school_level');
             $table->boolean('is_completed')->default(false);
             $table->boolean('is_canceled')->default(true);
+            $table->integer('price');
+            $table->enum('state',['neuf', 'comme neuf', 'bon etat','usagé']);
             $table->string('exchange_location');
             $table->double('exchange_location_lat');
             $table->double('exchange_location_logt');
