@@ -10,29 +10,60 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthenticatedSessionController extends Controller
 {
-    /**
-     * Handle an incoming authentication request.
-     */
-    public function store(LoginRequest $request): Response
+    public function store(Request $request)
     {
-        $request->authenticate();
 
-        $request->session()->regenerate();
+        $validated = Validator::make($request->all(), [
+            'email' => 'required|string|email:rfc',
+            'password' => 'required|string|min:8'
+        ]);
 
-        return response()->noContent();
+        if ($validated->fails()) {
+            return response()->json($validated->errors(), 403);
+
+        }
+
+        $credentials = ['email' => $request->email, 'password' => $request->password];
+
+        try {
+
+            if (!auth()->attempt($credentials)) {
+                return response()->json(['error' => 'Email or password incorrect '], 400);
+            }
+
+
+            $user = User::where('email', $request->email)->firstOrFail();
+            $token = $user->createToken('token')->plainTextToken;
+            $user['token'] = $token;
+
+            return response()->json([
+                'data' => $user,
+            ], 201);
+
+        } catch (\Exception $exception) {
+            return response()->json([
+                'error' => [
+                    $exception->getMessage()
+                ]
+            ], 500);
+        }
+
     }
 
-    /**
-     * Destroy an authenticated session.
-     */
-    public function destroy(Request $request): Response
+    public function destroy(Request $request)
     {
-        Auth::guard('web')->logout();
+        try {
+            $request->user()->currentAccessToken(null)->delete();
 
-        $request->session()->invalidate();
+            return response()->json([
+                'message' => "user has been logged out succesfully"
+            ], 200);
 
-        $request->session()->regenerateToken();
+        } catch (\Exception $th) {
+            return response()->json([
+                "error" => $th->getMessage(),
+            ]);
+        }
 
-        return response()->noContent();
     }
 }
