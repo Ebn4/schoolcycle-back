@@ -15,9 +15,12 @@ class Announcement extends Model
         'operation_type',
         'is_completed',
         'is_canceled',
+        'school_level',
         'exchange_location',
         'exchange_location_lat',
-        'exchange_location_logt'
+        'exchange_location_logt',
+        'user_id',
+        'category_id'
     ];
 
     public function users(){
