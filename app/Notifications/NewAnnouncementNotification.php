@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class NewAnnouncementNotification extends Notification
+class NewAnnouncementNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -40,7 +40,7 @@ class NewAnnouncementNotification extends Notification
         return (new MailMessage)
             ->subject($this->announcement->title ?? 'Nouvelle annonce')
             ->line('Une nouvelle annonce vous concerne')
-            ->action('Voir l\'annonce', url('/announcements/'.$this->announcement->id))
+            ->action('Voir l\'annonce ', config('app.frontend_url') . '/announcements/'.$this->announcement->id)
             ->line('Merci d\'utiliser notre application !');
     }
 
