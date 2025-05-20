@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\AnnouncementResource;
 use App\Models\Announcement;
+use App\Models\User;
+use App\Notifications\NewAnnouncementNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 
 class AnnouncementController extends Controller
 {
@@ -25,17 +28,36 @@ class AnnouncementController extends Controller
         try{
             $validated = $request->validate([
                 'title' => 'required|string|max:50',
-                'operation' => 'required|in:vente,echange,don',
+                'description' =>'required|string',
+                'operation_type' => 'required|in:vente,echange,don',
                 'school_level' => 'required|in:1ère primaire', '2ème primaire', '3ème primaire',
+                'state' => 'required|in:neuf,bon etat,usagé,comme neuf',
+                'price' => 'required',
                 'is_completed' => 'required',
                 'is_canceled' => 'required',
                 'exchange_location' => 'required|string',
-                'exchange_location_lat' => 'required|double',
-                'exchange_location_logt' => 'required|double'
+                'exchange_location_lat' => 'required',
+                'exchange_location_logt' => 'required',
+                'user_id' => 'required|exists:users,id',
+                'category_id' => 'required|exists:categories,id'
             ]);
 
             $announcement = Announcement::create($validated);
+
+            // recherche des utilisateurs
+            $users = User::whereHas('preferences',function($query) use ($announcement){
+                $query->where('categories.id',$announcement->category_id);
+            })->get();
+
+
+            // verification si il n'a trouvé aucun utilisateur
+            if($users->count() !== 0){
+                //Envoi des mail aux utilisateurs
+                Notification::send($users,new NewAnnouncementNotification($announcement));
+            }
+
             return new AnnouncementResource($announcement);
+
         }catch(\Exception $e){
             return response()->json([
                 'error' => $e->getMessage()
