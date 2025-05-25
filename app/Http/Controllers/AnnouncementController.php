@@ -16,7 +16,7 @@ class AnnouncementController extends Controller
      */
     public function index()
     {
-        $announcements = Announcement::with(['category','photos','favorite','user'])->get();
+        $announcements = Announcement::with(['category','photos','favorite','user'])->where('is_completed','=',0)->get();
         return AnnouncementResource::collection($announcements);
     }
 
@@ -125,6 +125,13 @@ class AnnouncementController extends Controller
     public function destroy(string $id)
     {
         $announcement = Announcement::find($id);
+        $user = auth()->user();
+        // verifie si l'utilisateur est l'auteur de l'annonce
+        if($announcement->user_id !== $user->id){
+            return response()->json([
+                'error' => 'you are not the author of this announcement'
+            ]);
+        }
         if(!$announcement){
             return response()->json([
                 'error' => 'announcement not found'
